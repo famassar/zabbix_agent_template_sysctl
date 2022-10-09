@@ -1,0 +1,58 @@
+zabbix_export:
+  version: '6.2'
+  date: '2022-10-09T20:41:15Z'
+  template_groups:
+    -
+      uuid: a571c0d144b14fd4a87a9d9b2aa9fcd6
+      name: Templates/Applications
+  templates:
+    -
+      uuid: c35a20038f124d62906ec42936cec7a5
+      template: 'Systemd by Zabbix agent'
+      name: 'Systemd by Zabbix agent'
+      groups:
+        -
+          name: Templates/Applications
+      discovery_rules:
+        -
+          uuid: d496a0cf3d044760987922ddd6b228e7
+          name: 'Services discovery'
+          key: services.discovery
+          delay: 30m
+          filter:
+            evaltype: AND
+            conditions:
+              -
+                macro: '{#UNIT.NAME}'
+                value: '{$SYSTEMD.NAME.SERVICE.MATCHES}'
+                formulaid: A
+          item_prototypes:
+            -
+              uuid: f25bfa9c30c0401da87cd83ee701257d
+              name: '{#UNIT.NAME}: Is active'
+              key: 'service.active["{#UNIT.NAME}"]'
+              history: 7d
+              trends: '0'
+              value_type: TEXT
+              tags:
+                -
+                  tag: component
+                  value: services
+              trigger_prototypes:
+                -
+                  uuid: d84ddf91d506438d873b0f83adb1bcdc
+                  expression: 'last(/Systemd by Zabbix agent/service.active["{#UNIT.NAME}"])<>"active"'
+                  name: '{#UNIT.NAME}: Is not active'
+                  priority: HIGH
+      tags:
+        -
+          tag: class
+          value: software
+        -
+          tag: target
+          value: systemd
+      macros:
+        -
+          macro: '{$SYSTEMD.NAME.SERVICE.MATCHES}'
+          value: '.*'
+          description: 'Filter of systemd service units by name'

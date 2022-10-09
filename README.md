@@ -2,7 +2,7 @@
 
 A Zabbix template for check linux services managed by sysctl (with agent and not agent2)
 In Zabbix there is a template for monitoring services managed by systemd only using agent2.
-This is a simple template with LLD for classical agent.
+This is a simple template with LLD for classical agent. Tested on Zabbix 6.0 and 6.2
 
 Use:
 1) copy the systemd.conf file in /etc/zabbix/zabbix-agentd.d directory and restart zabbix agent

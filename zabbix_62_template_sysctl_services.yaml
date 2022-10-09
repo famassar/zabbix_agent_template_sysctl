@@ -1,0 +1,138 @@
+zabbix_export:
+  version: '6.2'
+  date: '2022-10-09T20:23:17Z'
+  template_groups:
+    -
+      uuid: a571c0d144b14fd4a87a9d9b2aa9fcd6
+      name: Templates/Applications
+  templates:
+    -
+      uuid: c35a20038f124d62906ec42936cec7a5
+      template: 'Systemd by Zabbix agent'
+      name: 'Systemd by Zabbix agent'
+      groups:
+        -
+          name: Templates/Applications
+      discovery_rules:
+        -
+          uuid: d496a0cf3d044760987922ddd6b228e7
+          name: 'Services discovery'
+          key: services.discovery
+          delay: 30m
+          filter:
+            evaltype: AND
+            conditions:
+              -
+                macro: '{#UNIT.NAME}'
+                value: '{$SYSTEMD.NAME.SERVICE.MATCHES}'
+                formulaid: A
+          item_prototypes:
+            -
+              uuid: f25bfa9c30c0401da87cd83ee701257d
+              name: '{#UNIT.NAME}: Is active'
+              key: 'service.active["{#UNIT.NAME}"]'
+              history: 7d
+              trends: '0'
+              value_type: TEXT
+              tags:
+                -
+                  tag: component
+                  value: services
+              trigger_prototypes:
+                -
+                  uuid: d84ddf91d506438d873b0f83adb1bcdc
+                  expression: 'last(/Systemd by Zabbix agent/service.active["{#UNIT.NAME}"])<>"active"'
+                  name: '{#UNIT.NAME}: Is not active'
+                  priority: HIGH
+      tags:
+        -
+          tag: class
+          value: software
+        -
+          tag: target
+          value: systemd
+      macros:
+        -
+          macro: '{$SYSTEMD.NAME.SERVICE.MATCHES}'
+          value: '.*'
+          description: 'Filter of systemd service units by name'
+        -
+          macro: '{$SYSTEMD.NAME.SERVICE.NOT_MATCHES}'
+          value: CHANGE_IF_NEEDED
+          description: 'Filter of systemd service units by name'
+      valuemaps:
+        -
+          uuid: 50e0fa1ac9054a5d90b67cb363a4ed5b
+          name: 'Unit Active State'
+          mappings:
+            -
+              value: '0'
+              newvalue: unknown
+            -
+              value: '1'
+              newvalue: active
+            -
+              value: '2'
+              newvalue: reloading
+            -
+              value: '3'
+              newvalue: inactive
+            -
+              value: '4'
+              newvalue: failed
+            -
+              value: '5'
+              newvalue: activating
+            -
+              value: '6'
+              newvalue: deactivating
+        -
+          uuid: 7f6b2d9efd7a4561a351b4c5f83f64e1
+          name: 'Unit File State'
+          mappings:
+            -
+              value: '0'
+              newvalue: unknown
+            -
+              value: '1'
+              newvalue: enabled
+            -
+              value: '2'
+              newvalue: enabled-runtime
+            -
+              value: '3'
+              newvalue: linked
+            -
+              value: '4'
+              newvalue: linked-runtime
+            -
+              value: '5'
+              newvalue: masked
+            -
+              value: '6'
+              newvalue: masked-runtime
+            -
+              value: '7'
+              newvalue: static
+            -
+              value: '8'
+              newvalue: disabled
+            -
+              value: '9'
+              newvalue: invalid
+        -
+          uuid: cb08d69fefe8423182b5641b18a18a9c
+          name: 'Unit Load State'
+          mappings:
+            -
+              value: '0'
+              newvalue: unknown
+            -
+              value: '1'
+              newvalue: loaded
+            -
+              value: '2'
+              newvalue: error
+            -
+              value: '3'
+              newvalue: masked

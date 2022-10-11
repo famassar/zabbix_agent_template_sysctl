@@ -5,7 +5,7 @@ In Zabbix there is a template for monitoring services managed by systemd only us
 This is a simple template with LLD for classical agent. Tested on Zabbix 6.0 and 6.2
 
 Use:
-1) copy the systemd.conf file in the agent include directory and restart zabbix agent. Include directory can be found with:
+1) copy the sysctlcheck.conf file in the agent include directory and restart zabbix agent. Include directory can be found with:
 grep -i include /etc/zabbix/zabbix_agentd.conf
 2) Import the zabbix_template_sysctl_services.yaml template
 3) set up the macro {$SYSTEMD.NAME.SERVICE.MATCHES} with the name of the services you want to monitor.
